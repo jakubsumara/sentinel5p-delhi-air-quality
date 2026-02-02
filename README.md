@@ -1,32 +1,29 @@
 # Sentinel-5P Air Pollution Dynamics over Delhi NCR
 
-[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+## Project Overview
 
-## 📋 Project Overview
+This project analyzes 24 months of Sentinel-5P TROPOMI satellite data (January 2022 - January 2024) to study air pollution dynamics over Delhi NCR, focusing on four key pollutants:
 
-This project analyzes **24 months** of Sentinel-5P TROPOMI satellite data (January 2022 - January 2024) to study air pollution dynamics over Delhi NCR, focusing on four key pollutants:
+- NO2 (Nitrogen Dioxide) - traffic/industrial emissions
+- SO2 (Sulfur Dioxide) - power plants
+- CO (Carbon Monoxide) - biomass burning
+- HCHO (Formaldehyde) - secondary pollution chemistry
 
-- **NO₂** (Nitrogen Dioxide) - traffic/industrial emissions
-- **SO₂** (Sulfur Dioxide) - power plants
-- **CO** (Carbon Monoxide) - biomass burning
-- **HCHO** (Formaldehyde) - secondary pollution chemistry
+The analysis combines satellite data with ERA5 reanalysis wind data to distinguish locally generated pollution from transported pollution, providing insights for air quality management.
 
-The analysis combines satellite data with ERA5 reanalysis wind data to distinguish **locally generated pollution** from **transported pollution**, providing insights for air quality management.
+## Key Findings
 
-## 🎯 Key Findings
+- 62.5% of time: Local pollution dominant (low wind conditions)
+- 37.5% of time: Regional transport dominant (high wind conditions)
+- Strong seasonal patterns: Winter (local sources), Post-monsoon (crop burning)
+- Source attribution: Northwest (Punjab/Haryana crop burning), West (industrial regions)
 
-- **62.5% of time:** Local pollution dominant (low wind conditions)
-- **37.5% of time:** Regional transport dominant (high wind conditions)
-- **Strong seasonal patterns:** Winter (local sources), Post-monsoon (crop burning)
-- **Source attribution:** Northwest (Punjab/Haryana crop burning), West (industrial regions)
-
-## 🚀 Quick Start
+## Quick Start
 
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/sentinel5p-delhi-air-quality.git
+git clone https://github.com/jakubsumara/sentinel5p-delhi-air-quality.git
 cd sentinel5p-delhi-air-quality
 ```
 
@@ -69,7 +66,7 @@ python run_analysis.py --step visualize  # Generate visualizations
 
 See [WORKFLOW.md](WORKFLOW.md) for detailed instructions.
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 projSentinel/
@@ -97,15 +94,14 @@ projSentinel/
 │   ├── maps/                     # Map visualizations
 │   ├── animations/               # Temporal animations
 │   ├── time_series/              # Time series plots
-│   ├── reports/                   # Reports and documentation
-│   └── presentation/              # Presentation slides
+│   └── reports/                   # Reports and documentation
 │
 └── data/                         # Data directory (not in git)
     ├── era5/                     # ERA5 wind data
     └── processed/                # Processed Sentinel-5P data
 ```
 
-## 📊 Deliverables
+## Deliverables
 
 ### 1. Gridded 24-Month Maps and Animations
 - Monthly maps for all 4 pollutants
@@ -136,7 +132,7 @@ projSentinel/
 
 **Location:** `outputs/reports/Interpretive_Note_Sentinel5P_Delhi.md`
 
-## 🔧 Setup Requirements
+## Setup Requirements
 
 ### Google Earth Engine (For Sentinel-5P Data)
 
@@ -159,82 +155,78 @@ projSentinel/
    ```
 5. See [ERA5_SETUP.md](ERA5_SETUP.md) for details
 
-## 📖 Documentation
+## Documentation
 
-- **[WORKFLOW.md](WORKFLOW.md)** - Complete workflow guide
-- **[CODE_ORGANIZATION.md](CODE_ORGANIZATION.md)** - Code structure and organization
-- **[ENVIRONMENT_SETUP.md](ENVIRONMENT_SETUP.md)** - Detailed environment setup
-- **[GEE_SETUP.md](GEE_SETUP.md)** - Google Earth Engine setup
-- **[ERA5_SETUP.md](ERA5_SETUP.md)** - ERA5 data access setup
-- **[EXPLANATION_CLASSIFICATION.md](EXPLANATION_CLASSIFICATION.md)** - Classification methodology
+- [WORKFLOW.md](WORKFLOW.md) - Complete workflow guide
+- [CODE_ORGANIZATION.md](CODE_ORGANIZATION.md) - Code structure and organization
+- [ENVIRONMENT_SETUP.md](ENVIRONMENT_SETUP.md) - Detailed environment setup
+- [GEE_SETUP.md](GEE_SETUP.md) - Google Earth Engine setup
+- [ERA5_SETUP.md](ERA5_SETUP.md) - ERA5 data access setup
+- [EXPLANATION_CLASSIFICATION.md](EXPLANATION_CLASSIFICATION.md) - Classification methodology
 
-## 🎤 Presentation
-
-A 5-minute presentation covering key findings is available in `outputs/presentation/`:
-- 7 slides (PNG format)
-- Complete outline with timing guide
-- Ready for YouTube recording
-
-## 📈 Results Summary
+## Results Summary
 
 ### Pollution Regimes
-- **Local (62.5%):** Low wind conditions, pollution accumulates locally
-- **Advected (37.5%):** High wind conditions, pollution transported from surrounding regions
+- Local (62.5%): Low wind conditions, pollution accumulates locally
+- Advected (37.5%): High wind conditions, pollution transported from surrounding regions
 
 ### Seasonal Patterns
-- **Winter (Dec-Feb):** Elevated NO₂, SO₂ from heating and power generation
-- **Post-Monsoon (Oct-Nov):** Peak CO, HCHO from crop residue burning
-- **Summer (Mar-May):** Moderate levels with regional transport
-- **Monsoon (Jun-Sep):** Limited data due to cloud cover
+- Winter (Dec-Feb): Elevated NO2, SO2 from heating and power generation
+- Post-Monsoon (Oct-Nov): Peak CO, HCHO from crop residue burning
+- Summer (Mar-May): Moderate levels with regional transport
+- Monsoon (Jun-Sep): Limited data due to cloud cover
 
 ### Source Attribution
-- **Northwest:** Punjab/Haryana crop burning regions
-- **West:** Industrial areas and power plants
-- **Local:** Delhi's own emissions during calm conditions
+- Northwest: Punjab/Haryana crop burning regions
+- West: Industrial areas and power plants
+- Local: Delhi's own emissions during calm conditions
 
-## 🛠️ Technologies Used
+## Technologies Used
 
-- **Python 3.11+**
-- **xarray, rioxarray** - Geospatial data processing
-- **pandas, numpy** - Data analysis
-- **matplotlib, cartopy** - Visualization
-- **Google Earth Engine API** - Cloud-based data processing
-- **Copernicus CDS API** - ERA5 reanalysis data
+- Python 3.11+
+- xarray, rioxarray - Geospatial data processing
+- pandas, numpy - Data analysis
+- matplotlib, cartopy - Visualization
+- Google Earth Engine API - Cloud-based data processing
+- Copernicus CDS API - ERA5 reanalysis data
 
-## 📝 Citation
+## Citation
 
 If you use this project, please cite:
 
 ```bibtex
 @misc{sentinel5p-delhi-air-quality,
   title={Sentinel-5P Air Pollution Dynamics over Delhi NCR},
-  author={Your Name},
+  author={Jakub Sumara and Zuzanna Słobodzian},
   year={2025},
-  url={https://github.com/YOUR_USERNAME/sentinel5p-delhi-air-quality}
+  url={https://github.com/jakubsumara/sentinel5p-delhi-air-quality}
 }
 ```
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 👥 Authors
+## Authors
 
-- **Your Name** - *Initial work* - [YourGitHub](https://github.com/YOUR_USERNAME)
+- **Jakub Sumara** - jsumara@student.agh.edu.pl - [jakubsumara](https://github.com/jakubsumara)
+- **Zuzanna Słobodzian** - zslobodzian@student.agh.edu.pl - [ZuzannaSlobodzian](https://github.com/ZuzannaSlobodzian)
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - AGH University - ML4SA2 Course
 - Copernicus Programme for Sentinel-5P data
 - Google Earth Engine for cloud processing
 - ECMWF for ERA5 reanalysis data
 
-## 📧 Contact
+## Contact
 
-For questions or issues, please open an issue on GitHub or contact [your.email@example.com](mailto:your.email@example.com).
+For questions or issues, please contact:
+- Jakub Sumara: jsumara@student.agh.edu.pl
+- Zuzanna Słobodzian: zslobodzian@student.agh.edu.pl
 
 ---
 
-**Project Status:** ✅ Complete and ready for submission
+**Project Status:** Complete and ready for submission
 
 **Last Updated:** January 2025

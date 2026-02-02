@@ -1,10 +1,10 @@
 # GitHub Upload Guide
 
-## ✅ Repository Prepared
+## Repository Prepared
 
 Your project is now ready to be uploaded to GitHub! Git has been initialized and all files have been staged.
 
-## 📋 Step-by-Step Instructions
+## Step-by-Step Instructions
 
 ### Step 1: Create GitHub Repository
 
@@ -13,7 +13,7 @@ Your project is now ready to be uploaded to GitHub! Git has been initialized and
    - **Repository name:** `sentinel5p-delhi-air-quality` (or your preferred name)
    - **Description:** `Sentinel-5P Air Pollution Dynamics over Delhi NCR - 24-month analysis`
    - **Visibility:** Choose Public or Private
-   - **⚠️ IMPORTANT:** Do NOT check any of these:
+   - **IMPORTANT:** Do NOT check any of these:
      - ❌ Add a README file
      - ❌ Add .gitignore
      - ❌ Choose a license
@@ -24,11 +24,11 @@ Your project is now ready to be uploaded to GitHub! Git has been initialized and
 After creating the repository, GitHub will show you commands. Use these:
 
 ```bash
-# Add remote (replace YOUR_USERNAME with your GitHub username)
-git remote add origin https://github.com/YOUR_USERNAME/sentinel5p-delhi-air-quality.git
+# Add remote
+git remote add origin https://github.com/jakubsumara/sentinel5p-delhi-air-quality.git
 
 # Or if you prefer SSH:
-# git remote add origin git@github.com:YOUR_USERNAME/sentinel5p-delhi-air-quality.git
+# git remote add origin git@github.com:jakubsumara/sentinel5p-delhi-air-quality.git
 ```
 
 ### Step 3: Commit and Push
@@ -52,17 +52,15 @@ git push -u origin main
 
 ### Step 4: Verify Upload
 
-1. Go to your repository on GitHub: `https://github.com/YOUR_USERNAME/sentinel5p-delhi-air-quality`
+1. Go to your repository on GitHub: `https://github.com/jakubsumara/sentinel5p-delhi-air-quality`
 2. Verify that all files are present
 3. Check that README.md displays correctly
 
-## 🚀 Quick Commands (Copy-Paste Ready)
-
-Replace `YOUR_USERNAME` with your GitHub username:
+## Quick Commands (Copy-Paste Ready)
 
 ```bash
 # 1. Add remote
-git remote add origin https://github.com/YOUR_USERNAME/sentinel5p-delhi-air-quality.git
+git remote add origin https://github.com/jakubsumara/sentinel5p-delhi-air-quality.git
 
 # 2. Commit
 git commit -m "Initial commit: Complete Sentinel-5P analysis project"
@@ -72,21 +70,20 @@ git branch -M main
 git push -u origin main
 ```
 
-## 📝 What's Included
+## What's Included
 
 The repository includes:
 
-- ✅ All analysis scripts (`scripts/`)
-- ✅ Main workflow script (`run_analysis.py`)
-- ✅ Configuration file (`config.py`)
-- ✅ Complete documentation (README, WORKFLOW, etc.)
-- ✅ Jupyter notebook (`notebooks/`)
-- ✅ Output visualizations (`outputs/maps/`, `outputs/time_series/`)
-- ✅ Presentation slides (`outputs/presentation/`)
-- ✅ Interpretive note (`outputs/reports/`)
-- ✅ Setup scripts and guides
+- All analysis scripts (`scripts/`)
+- Main workflow script (`run_analysis.py`)
+- Configuration file (`config.py`)
+- Complete documentation (README, WORKFLOW, etc.)
+- Jupyter notebook (`notebooks/`)
+- Output visualizations (`outputs/maps/`, `outputs/time_series/`)
+- Interpretive note (`outputs/reports/`)
+- Setup scripts and guides
 
-**Excluded (via .gitignore):**
+Excluded (via .gitignore):
 - Large data files (`data/era5/`, `data/processed/*.nc`, `*.tif`)
 - Credentials (`.cdsapirc`, `earthengine-credentials.json`)
 - Python cache files (`__pycache__/`)
@@ -111,14 +108,9 @@ The repository includes:
   - Set up SSH keys
   - Use GitHub Desktop or GitHub CLI
 
-## 🎯 After Upload
+## After Upload
 
-1. **Update README.md:**
-   - Replace `YOUR_USERNAME` with your actual GitHub username
-   - Update author information
-   - Add your contact email
-
-2. **Add Topics/Tags:**
+1. **Add Topics/Tags:**
    - Go to repository settings
    - Add topics: `sentinel-5p`, `air-quality`, `delhi`, `satellite-data`, `python`, `earth-observation`
 
@@ -152,10 +144,10 @@ git commit -m "Remove large data files"
 # Remove existing remote
 git remote remove origin
 # Add new remote
-git remote add origin https://github.com/YOUR_USERNAME/sentinel5p-delhi-air-quality.git
+git remote add origin https://github.com/jakubsumara/sentinel5p-delhi-air-quality.git
 ```
 
-## ✅ Verification Checklist
+## Verification Checklist
 
 Before pushing, verify:
 - [ ] All sensitive files are in `.gitignore`
@@ -172,4 +164,4 @@ Before pushing, verify:
 
 ---
 
-**Ready to upload!** Follow the steps above to get your project on GitHub. 🚀
+Ready to upload! Follow the steps above to get your project on GitHub.

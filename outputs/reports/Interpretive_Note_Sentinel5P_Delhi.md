@@ -293,6 +293,6 @@ However, it should be used **in combination with**:
 
 ---
 
-**Author:** [Your Name]  
-**Date:** February 2025  
+**Authors:** Jakub Sumara, Zuzanna Słobodzian  
+**Date:** January 2025  
 **Project:** Sentinel-5P Air Pollution Dynamics over Delhi (AGH ML4SA2)

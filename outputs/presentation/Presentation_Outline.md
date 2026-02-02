@@ -208,8 +208,8 @@ Delhi's pollution is a **mix of local and regional sources** - both need attenti
 - Code: `scripts/`, `notebooks/01_complete_analysis.ipynb`
 
 **Contact:**
-[Your Name]
-[Your Email]
+Jakub Sumara - jsumara@student.agh.edu.pl
+Zuzanna Słobodzian - zslobodzian@student.agh.edu.pl
 
 **AGH University - ML4SA2 Course Project**
 
