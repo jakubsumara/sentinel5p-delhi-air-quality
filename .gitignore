@@ -1,0 +1,56 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+.venv
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb_checkpoints/
+
+# Data files (large)
+data/raw/
+data/processed/*.nc
+data/processed/*.h5
+data/processed/*.tif
+data/era5/
+*.nc
+*.h5
+*.tif
+*.tiff
+
+# Outputs (keep structure, ignore large files)
+outputs/maps/*.tif
+outputs/animations/*.mp4
+# Keep GIF animations for GitHub (they're relatively small)
+# outputs/animations/*.gif
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Credentials
+*.json
+.copernicus_credentials
+.cdsapirc
+earthengine-credentials.json
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+temp/
+tmp/
