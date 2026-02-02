@@ -17,6 +17,24 @@ from datetime import datetime, timedelta
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import config
 
+# Import Delhi boundaries
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from delhi_boundaries import get_delhi_boundary_polygon, get_delhi_center_contours
+
+def add_delhi_roi_contour(ax):
+    """Add Delhi administrative boundary."""
+    try:
+        # Get Delhi administrative boundary
+        boundary = get_delhi_boundary_polygon()
+        # Ensure coordinates are lists/arrays
+        if isinstance(boundary['lon'], (list, tuple, np.ndarray)) and isinstance(boundary['lat'], (list, tuple, np.ndarray)):
+            ax.plot(boundary['lon'], boundary['lat'], 'r-', linewidth=2.5, 
+                    transform=ccrs.PlateCarree(), zorder=11, label='Delhi NCR Boundary', alpha=0.8)
+    except Exception as e:
+        print(f"    [WARNING] Could not plot Delhi boundary: {e}")
+    
+    return ax
+
 def load_era5_daily(data_dir='data/era5'):
     """Load all daily ERA5 files."""
     import glob
@@ -153,7 +171,12 @@ def create_source_attribution_map(pollutant_code, output_dir='outputs/maps'):
     ax.add_feature(cfeature.BORDERS, linewidth=0.8)
     ax.add_feature(cfeature.RIVERS, linewidth=0.5, alpha=0.5)
     ax.add_feature(cfeature.LAND, alpha=0.3)
-    ax.gridlines(draw_labels=True, alpha=0.5, linestyle='--')
+    # Configure gridlines to avoid overlap with legend
+    gl = ax.gridlines(draw_labels=True, alpha=0.5, linestyle='--', dms=True)
+    gl.top_labels = False
+    gl.right_labels = False
+    gl.left_labels = True
+    gl.bottom_labels = True
     
     # Calculate trajectories for severe episodes
     print(f"Calculating trajectories for {len(severe_df)} severe episodes...")
@@ -182,6 +205,9 @@ def create_source_attribution_map(pollutant_code, output_dir='outputs/maps'):
                    'o', color=colors[idx], markersize=10,
                    transform=ccrs.PlateCarree(), alpha=0.8)
     
+    # Add Delhi ROI contour
+    add_delhi_roi_contour(ax)
+    
     # Mark Delhi center
     ax.plot(config.DELHI_CENTER['lon'], config.DELHI_CENTER['lat'],
            'r*', markersize=25, transform=ccrs.PlateCarree(),
@@ -198,19 +224,21 @@ def create_source_attribution_map(pollutant_code, output_dir='outputs/maps'):
     
     # Add regions labels
     ax.text(75.3, 30.1, 'Punjab\n(Crop Burning)', 
-           transform=ccrs.PlateCarree(), fontsize=10,
-           bbox=dict(boxstyle='round', facecolor='yellow', alpha=0.5))
+           transform=ccrs.PlateCarree(), fontsize=9,
+           bbox=dict(boxstyle='round', facecolor='yellow', alpha=0.6, pad=0.5))
     ax.text(76.1, 29.1, 'Haryana\n(Crop Burning)', 
-           transform=ccrs.PlateCarree(), fontsize=10,
-           bbox=dict(boxstyle='round', facecolor='yellow', alpha=0.5))
+           transform=ccrs.PlateCarree(), fontsize=9,
+           bbox=dict(boxstyle='round', facecolor='yellow', alpha=0.6, pad=0.5))
     
     ax.set_title(f"{pollutant_info['name']} - Source Attribution Map\n"
                 f"Back-trajectories for Severe Episodes (72 hours)",
-                fontsize=14, fontweight='bold')
+                fontsize=13, fontweight='bold', pad=20)
     
-    ax.legend(loc='upper left', fontsize=8, ncol=2)
+    # Improve legend placement to avoid overlap
+    ax.legend(loc='upper left', fontsize=7, ncol=2, framealpha=0.9, 
+              columnspacing=0.5, handlelength=1.5)
     
-    plt.tight_layout()
+    plt.tight_layout(pad=2.5)
     
     output_file = os.path.join(output_dir, f"{pollutant_code}_source_attribution.png")
     plt.savefig(output_file, dpi=config.VISUALIZATION['figure_dpi'],

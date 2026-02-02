@@ -9,6 +9,8 @@ import xarray as xr
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
+import matplotlib.patches as mpatches
+from matplotlib.patches import Rectangle
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 from pathlib import Path
@@ -16,6 +18,23 @@ from pathlib import Path
 # Add parent directory to path to import config
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import config
+
+# Import Delhi boundaries
+from delhi_boundaries import get_delhi_boundary_polygon, get_delhi_center_contours
+
+def add_delhi_roi_contour(ax):
+    """Add Delhi administrative boundary."""
+    try:
+        # Get Delhi administrative boundary
+        boundary = get_delhi_boundary_polygon()
+        # Ensure coordinates are lists/arrays
+        if isinstance(boundary['lon'], (list, tuple, np.ndarray)) and isinstance(boundary['lat'], (list, tuple, np.ndarray)):
+            ax.plot(boundary['lon'], boundary['lat'], 'r-', linewidth=2.5, 
+                    transform=ccrs.PlateCarree(), zorder=11, label='Delhi NCR Boundary', alpha=0.8)
+    except Exception as e:
+        print(f"    [WARNING] Could not plot Delhi boundary: {e}")
+    
+    return ax
 
 def load_composite(pollutant_code, data_dir='data/processed'):
     """Load monthly composite for a pollutant."""
@@ -60,7 +79,12 @@ def create_monthly_map(pollutant_code, month_data, month_str, output_dir='output
     ax.add_feature(cfeature.COASTLINE, linewidth=0.5, alpha=0.5)
     ax.add_feature(cfeature.BORDERS, linewidth=0.5, alpha=0.5)
     ax.add_feature(cfeature.RIVERS, linewidth=0.3, alpha=0.3)
-    ax.gridlines(draw_labels=True, alpha=0.5, linestyle='--')
+    # Configure gridlines to avoid overlap with colorbar
+    gl = ax.gridlines(draw_labels=True, alpha=0.5, linestyle='--', dms=True)
+    gl.top_labels = False
+    gl.right_labels = False
+    gl.left_labels = True
+    gl.bottom_labels = True
     
     # Get coordinates
     if 'lon' in month_data.coords and 'lat' in month_data.coords:
@@ -91,24 +115,24 @@ def create_monthly_map(pollutant_code, month_data, month_str, output_dir='output
         im = ax.contourf(LON, LAT, values, 
                         transform=ccrs.PlateCarree(),
                         cmap='viridis', levels=20, alpha=0.8)
-        plt.colorbar(im, ax=ax, label=f"{pollutant_info['name']} ({pollutant_info['unit']})",
-                    shrink=0.8, pad=0.02)
+        cbar = plt.colorbar(im, ax=ax, label=f"{pollutant_info['name']} ({pollutant_info['unit']})",
+                    shrink=0.8, pad=0.05, aspect=30)
+        cbar.ax.tick_params(labelsize=9)
+        cbar.set_label(f"{pollutant_info['name']} ({pollutant_info['unit']})", fontsize=10)
+    
+    # Add Delhi ROI contour
+    add_delhi_roi_contour(ax)
     
     # Add Delhi center marker
     ax.plot(config.DELHI_CENTER['lon'], config.DELHI_CENTER['lat'], 
            'r*', markersize=20, transform=ccrs.PlateCarree(), 
            label='Delhi Center', zorder=10)
     
-    # Add known sources
-    for source_type, sources in config.KNOWN_SOURCES.items():
-        for source in sources:
-            ax.plot(source['lon'], source['lat'], 'ko', 
-                   markersize=8, transform=ccrs.PlateCarree(), 
-                   alpha=0.6, zorder=9)
+    # Known sources removed - they were validation markers (power plants and industrial areas)
     
-    ax.set_title(f"{pollutant_info['name']} - {month_str}", fontsize=14, fontweight='bold')
+    ax.set_title(f"{pollutant_info['name']} - {month_str}", fontsize=14, fontweight='bold', pad=20)
     
-    plt.tight_layout()
+    plt.tight_layout(pad=2.0)
     
     output_file = os.path.join(output_dir, f"{pollutant_code}_{month_str}_map.png")
     plt.savefig(output_file, dpi=config.VISUALIZATION['figure_dpi'],
@@ -170,7 +194,12 @@ def create_seasonal_anomaly_map(pollutant_code, output_dir='outputs/maps'):
         ax.set_extent(extent, crs=ccrs.PlateCarree())
         ax.add_feature(cfeature.COASTLINE, linewidth=0.5, alpha=0.5)
         ax.add_feature(cfeature.BORDERS, linewidth=0.5, alpha=0.5)
-        ax.gridlines(draw_labels=True, alpha=0.5, linestyle='--')
+        # Configure gridlines to avoid overlap with colorbar
+        gl = ax.gridlines(draw_labels=True, alpha=0.5, linestyle='--', dms=True)
+        gl.top_labels = False
+        gl.right_labels = False
+        gl.left_labels = True
+        gl.bottom_labels = True
         
         if season_name in seasons_data:
             anomaly = seasons_data[season_name]
@@ -198,17 +227,23 @@ def create_seasonal_anomaly_map(pollutant_code, output_dir='outputs/maps'):
                                 transform=ccrs.PlateCarree(),
                                 cmap='RdBu_r', levels=20, 
                                 vmin=-vmax, vmax=vmax, alpha=0.8)
-                plt.colorbar(im, ax=ax, label='Anomaly (mol/m²)',
-                           shrink=0.6, pad=0.02)
+                # Position colorbar to avoid overlap with right-side labels
+                cbar = plt.colorbar(im, ax=ax, label='Anomaly (mol/m²)',
+                           shrink=0.6, pad=0.12, aspect=25)
+                cbar.ax.tick_params(labelsize=8)
+                cbar.set_label('Anomaly (mol/m²)', fontsize=9)
+            
+            # Add Delhi ROI contour
+            add_delhi_roi_contour(ax)
             
             ax.plot(config.DELHI_CENTER['lon'], config.DELHI_CENTER['lat'],
                    'r*', markersize=15, transform=ccrs.PlateCarree(), zorder=10)
         
-        ax.set_title(f"{season_name.capitalize()} Anomaly", fontsize=12, fontweight='bold')
+        ax.set_title(f"{season_name.capitalize()} Anomaly", fontsize=11, fontweight='bold', pad=10)
     
     plt.suptitle(f"{pollutant_info['name']} - Seasonal Anomalies (vs Annual Mean)",
-                 fontsize=16, fontweight='bold', y=0.98)
-    plt.tight_layout()
+                 fontsize=14, fontweight='bold', y=0.995)
+    plt.tight_layout(pad=2.5, h_pad=2.0, w_pad=2.0)
     
     output_file = os.path.join(output_dir, f"{pollutant_code}_seasonal_anomaly.png")
     plt.savefig(output_file, dpi=config.VISUALIZATION['figure_dpi'],
@@ -275,13 +310,19 @@ def create_animation(pollutant_code, output_dir='outputs/animations'):
                     cmap='viridis', levels=20,
                     vmin=vmin, vmax=vmax, alpha=0.8)
     
-    cbar = plt.colorbar(im, ax=ax, label=f"{pollutant_info['name']} ({pollutant_info['unit']})")
+    cbar = plt.colorbar(im, ax=ax, label=f"{pollutant_info['name']} ({pollutant_info['unit']})",
+                       shrink=0.8, pad=0.05, aspect=30)
+    cbar.ax.tick_params(labelsize=9)
+    cbar.set_label(f"{pollutant_info['name']} ({pollutant_info['unit']})", fontsize=10)
+    
+    # Add Delhi ROI contour
+    add_delhi_roi_contour(ax)
     
     ax.plot(config.DELHI_CENTER['lon'], config.DELHI_CENTER['lat'],
            'r*', markersize=20, transform=ccrs.PlateCarree(), zorder=10)
     
     title = ax.set_title(f"{pollutant_info['name']} - {composite.time.values[0]}",
-                        fontsize=14, fontweight='bold')
+                        fontsize=13, fontweight='bold', pad=20)
     
     def animate(frame):
         ax.clear()
@@ -299,12 +340,15 @@ def create_animation(pollutant_code, output_dir='outputs/animations'):
                         cmap='viridis', levels=20,
                         vmin=vmin, vmax=vmax, alpha=0.8)
         
+        # Add Delhi ROI contour
+        add_delhi_roi_contour(ax)
+        
         ax.plot(config.DELHI_CENTER['lon'], config.DELHI_CENTER['lat'],
                'r*', markersize=20, transform=ccrs.PlateCarree(), zorder=10)
         
         time_str = str(composite.time.values[frame])[:7]  # YYYY-MM
         ax.set_title(f"{pollutant_info['name']} - {time_str}",
-                    fontsize=14, fontweight='bold')
+                    fontsize=13, fontweight='bold', pad=20)
         
         return [im]
     

@@ -109,25 +109,27 @@ def create_time_series_plot(pollutant_code, output_dir='outputs/time_series'):
     # Plot 1: Time series
     ax1 = axes[0]
     ax1.plot(plot_df.index, plot_df[value_col], 'b-', linewidth=2, label='Monthly Average', marker='o', markersize=4)
-    ax1.set_ylabel(f"{pollutant_info['name']} ({pollutant_info['unit']})")
-    ax1.set_title(f"{pollutant_info['name']} - 24 Month Time Series")
+    ax1.set_ylabel(f"{pollutant_info['name']} ({pollutant_info['unit']})", fontsize=11)
+    ax1.set_title(f"{pollutant_info['name']} - 24 Month Time Series", fontsize=12, pad=15)
     ax1.grid(True, alpha=0.3)
-    ax1.legend()
+    ax1.legend(fontsize=9, loc='best')
+    ax1.tick_params(axis='both', labelsize=9)
     
     # Plot 2: Seasonal decomposition
     ax2 = axes[1]
     plot_df['month'] = plot_df.index.month
     seasonal_means = plot_df.groupby('month')[value_col].mean()
     ax2.bar(range(1, 13), [seasonal_means.get(m, 0) for m in range(1, 13)], color='coral', alpha=0.7)
-    ax2.set_xlabel('Month')
-    ax2.set_ylabel(f"{pollutant_info['name']} ({pollutant_info['unit']})")
-    ax2.set_title('Seasonal Pattern')
+    ax2.set_xlabel('Month', fontsize=11)
+    ax2.set_ylabel(f"{pollutant_info['name']} ({pollutant_info['unit']})", fontsize=11)
+    ax2.set_title('Seasonal Pattern', fontsize=12, pad=15)
     ax2.set_xticks(range(1, 13))
     ax2.set_xticklabels(['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
-                        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'])
+                        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], fontsize=9, rotation=45)
     ax2.grid(True, alpha=0.3, axis='y')
+    ax2.tick_params(axis='y', labelsize=9)
     
-    plt.tight_layout()
+    plt.tight_layout(pad=2.5)
     
     output_file = os.path.join(output_dir, f"{pollutant_code}_timeseries.png")
     plt.savefig(output_file, dpi=config.VISUALIZATION['figure_dpi'], 
@@ -192,12 +194,13 @@ def create_regime_comparison_plot(pollutant_code, output_dir='outputs/time_serie
                fontsize=9, verticalalignment='top',
                bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.5))
     
-    ax.set_ylabel(f"{pollutant_info['name']} ({pollutant_info['unit']})")
-    ax.set_title(f"{pollutant_info['name']} - Local vs Advected Regimes")
-    ax.legend()
+    ax.set_xlabel('Date', fontsize=11)
+    ax.set_ylabel(f"{pollutant_info['name']} ({pollutant_info['unit']})", fontsize=11)
+    ax.set_title(f"{pollutant_info['name']} - Local vs Advected Regimes", fontsize=12, pad=15)
+    ax.legend(loc='best', fontsize=9, framealpha=0.9)
     ax.grid(True, alpha=0.3)
     
-    plt.tight_layout()
+    plt.tight_layout(pad=2.0)
     
     output_file = os.path.join(output_dir, f"{pollutant_code}_regime_comparison.png")
     plt.savefig(output_file, dpi=config.VISUALIZATION['figure_dpi'],
