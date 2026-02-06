@@ -104,9 +104,8 @@ projSentinel/
 ## Deliverables
 
 ### 1. Gridded 24-Month Maps and Animations
-- Monthly maps for all 4 pollutants
 - Seasonal anomaly maps highlighting winter smog and post-harvest burning
-- 24-month animations showing temporal evolution
+- 24-month animations showing temporal evolution with power plant locations
 
 **Location:** `outputs/maps/`, `outputs/animations/`
 
@@ -118,11 +117,11 @@ projSentinel/
 **Location:** `outputs/time_series/`
 
 ### 3. Source-Region Attribution Maps
-- Back-trajectory analysis for severe episodes
-- Upwind origin zones (Punjab/Haryana crop burning, industrial regions)
-- Transport pathways visualization
+- Seasonal back-trajectory analysis for advected pollution days
+- Upwind origin zones (Punjab/Haryana crop burning, industrial regions, power plants)
+- Transport pathways visualization by season
 
-**Location:** `outputs/maps/*_source_attribution.png`
+**Location:** `outputs/maps/source_attribution_*.png` (winter, summer, monsoon, post_monsoon)
 
 ### 4. Interpretive Note
 - Sentinel-5P strengths and limitations

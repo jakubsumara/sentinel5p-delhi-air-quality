@@ -192,9 +192,8 @@ python scripts/create_maps.py
 ```
 
 **Outputs:**
-- `outputs/maps/*_seasonal_anomaly.png` - Seasonal anomaly maps
-- `outputs/maps/*_YYYYMM_map.png` - Sample monthly maps
-- `outputs/animations/*_animation.gif` - Temporal evolution animations
+- `outputs/maps/*_seasonal_anomaly.png` - Seasonal anomaly maps for each pollutant
+- `outputs/animations/*_animation.gif` - 24-month temporal evolution animations with power plant locations
 
 #### 5.3 Source Attribution Maps
 
@@ -203,7 +202,8 @@ python scripts/create_source_attribution.py
 ```
 
 **Outputs:**
-- `outputs/maps/*_source_attribution.png` - Back-trajectory maps for severe episodes
+- `outputs/maps/source_attribution_*.png` - Seasonal back-trajectory maps (winter, summer, monsoon, post_monsoon)
+- Shows averaged trajectories for advected pollution days with wind flow visualization
 
 ---
 
@@ -232,9 +232,11 @@ projSentinel/
 │   │   └── ... (for all pollutants)
 │   ├── maps/
 │   │   ├── NO2_seasonal_anomaly.png
-│   │   ├── NO2_source_attribution.png
-│   │   ├── NO2_202201_map.png
-│   │   └── ... (for all pollutants)
+│   │   ├── source_attribution_winter.png
+│   │   ├── source_attribution_summer.png
+│   │   ├── source_attribution_monsoon.png
+│   │   ├── source_attribution_post_monsoon.png
+│   │   └── ... (seasonal anomalies for all pollutants)
 │   ├── animations/
 │   │   ├── NO2_animation.gif
 │   │   └── ... (for all pollutants)
@@ -328,9 +330,10 @@ After completing the workflow:
    - Modify `config.py` for different regions or time periods
    - Adjust thresholds in analysis scripts
 
-3. **Create presentation:**
-   - Use outputs for 5-minute presentation
-   - Focus on key findings from interpretive note
+3. **Review results:**
+   - Check seasonal patterns in anomaly maps
+   - Review source attribution by season
+   - Analyze time series trends
 
 ---
 

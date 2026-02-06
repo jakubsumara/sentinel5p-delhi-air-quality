@@ -30,8 +30,9 @@ projSentinel/
 │   ├── hotspot_analysis.py      # Identify pollution hotspots
 │   │
 │   ├── visualize.py             # Time series plots
-│   ├── create_maps.py           # Map visualizations
-│   └── create_source_attribution.py  # Source attribution maps
+│   ├── create_maps.py           # Map visualizations and animations
+│   ├── create_source_attribution.py  # Source attribution maps
+│   └── delhi_boundaries.py      # Delhi administrative boundaries
 │
 ├── notebooks/
 │   └── 01_complete_analysis.ipynb  # Interactive workflow notebook
@@ -42,8 +43,8 @@ projSentinel/
 │
 ├── outputs/                     # Analysis outputs
 │   ├── time_series/             # Time series plots
-│   ├── maps/                    # Map visualizations
-│   ├── animations/               # Animation GIFs
+│   ├── maps/                    # Map visualizations (seasonal anomalies, source attribution)
+│   ├── animations/               # Animation GIFs (24-month temporal evolution)
 │   └── reports/                  # Reports and documentation
 │
 └── Documentation/
@@ -80,8 +81,9 @@ projSentinel/
 
 ### 5. Visualization Scripts
 - **`visualize.py`**: Creates time series plots and regime comparisons
-- **`create_maps.py`**: Generates map visualizations and animations
-- **`create_source_attribution.py`**: Creates source attribution maps
+- **`create_maps.py`**: Generates seasonal anomaly maps and 24-month animations with power plant markers
+- **`create_source_attribution.py`**: Creates seasonal source attribution maps with back-trajectories
+- **`delhi_boundaries.py`**: Handles Delhi administrative boundary plotting
 
 ## Main Entry Point
 

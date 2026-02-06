@@ -2,13 +2,13 @@
 
 ## What Do the Colors Mean?
 
-### 🔴 Red Circles = **Local Regime**
+### Red Circles = **Local Regime**
 - **Wind Speed:** Low (< 4.0 m/s)
 - **Meaning:** Pollution is likely generated locally in Delhi
 - **Conditions:** Calm or light winds, so pollution doesn't travel far
 - **Example:** Still air, pollution accumulates in the city
 
-### 🔵 Blue Squares = **Advected Regime**  
+### Blue Squares = **Advected Regime**  
 - **Wind Speed:** Higher (≥ 4.0 m/s)
 - **Meaning:** Pollution is transported from elsewhere
 - **Conditions:** Stronger winds carry pollution from upwind regions
