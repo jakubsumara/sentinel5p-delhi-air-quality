@@ -36,6 +36,92 @@ def add_delhi_roi_contour(ax):
     
     return ax
 
+# Major power plants in Delhi NCR region (active 2022-2024) with types and colors
+# Only plants within or near Delhi ROI (76.5-78.0°E, 28.0-29.0°N)
+MAJOR_POWER_PLANTS = {
+    'coal': [
+        {'name': 'Dadri TPS', 'lon': 77.5500, 'lat': 28.5500, 'capacity': '1820 MW'},  # Greater Noida - active
+        {'name': 'Indraprastha TPS', 'lon': 77.2500, 'lat': 28.6200, 'capacity': '270 MW'},  # Active
+        {'name': 'Panipat TPS', 'lon': 76.9600, 'lat': 29.3900, 'capacity': '920 MW'},  # Haryana - near
+        {'name': 'Rajghat TPS', 'lon': 77.2300, 'lat': 28.6400, 'capacity': '135 MW'},  # Central Delhi
+        {'name': 'Yamuna Nagar TPS', 'lon': 77.2800, 'lat': 30.1000, 'capacity': '600 MW'},  # Haryana - slightly north
+        {'name': 'Khedar TPS', 'lon': 77.2000, 'lat': 28.7000, 'capacity': '200 MW'},  # Near Delhi
+        {'name': 'Badarpur TPS', 'lon': 77.3000, 'lat': 28.4800, 'capacity': '705 MW'},  # South Delhi
+        {'name': 'NTPC Dadri Unit 2', 'lon': 77.5600, 'lat': 28.5600, 'capacity': '490 MW'},  # Near Dadri
+        {'name': 'NTPC Badarpur', 'lon': 77.3100, 'lat': 28.4900, 'capacity': '705 MW'},  # South Delhi
+        {'name': 'Faridabad TPS', 'lon': 77.3200, 'lat': 28.4200, 'capacity': '150 MW'},  # Faridabad
+        {'name': 'Ghaziabad TPS', 'lon': 77.4200, 'lat': 28.6700, 'capacity': '100 MW'},  # Ghaziabad
+    ],
+    'gas': [
+        {'name': 'Pragati Power Station', 'lon': 77.2800, 'lat': 28.5800, 'capacity': '1500 MW'},  # Active
+        {'name': 'Bawana Gas Power Plant', 'lon': 77.0500, 'lat': 28.8000, 'capacity': '1500 MW'},  # Active
+        {'name': 'Faridabad Gas Power Plant', 'lon': 77.3500, 'lat': 28.4000, 'capacity': '432 MW'},  # Active
+        {'name': 'Gurgaon Gas Power Plant', 'lon': 77.1000, 'lat': 28.4000, 'capacity': '250 MW'},  # Near Delhi
+        {'name': 'Ghaziabad Gas Power Plant', 'lon': 77.4500, 'lat': 28.6500, 'capacity': '200 MW'},  # Near Delhi
+    ]
+}
+
+# Color and marker definitions for power plants (consistent across all frames)
+POWER_PLANT_COLORS = {
+    'coal': 'black',
+    'gas': 'green'
+}
+
+POWER_PLANT_MARKERS = {
+    'coal': 's',  # square
+    'gas': '^',   # triangle
+}
+
+def add_power_plant_points(ax):
+    """Add colorful point markers for major power plants with legend."""
+    # Get map extent to filter plants within view
+    extent = ax.get_extent()
+    lon_min, lon_max, lat_min, lat_max = extent
+    
+    # Plot power plants within the map extent
+    legend_elements = []
+    plotted_types = set()
+    
+    for plant_type, plants in MAJOR_POWER_PLANTS.items():
+        for plant in plants:
+            # Check if plant is within map extent (with some buffer)
+            if (lon_min - 0.5 <= plant['lon'] <= lon_max + 0.5 and 
+                lat_min - 0.5 <= plant['lat'] <= lat_max + 0.5):
+                
+                # Use matplotlib named colors for absolute consistency
+                if plant_type == 'coal':
+                    plot_color = 'black'  # Matplotlib named color
+                    marker = 's'  # square
+                elif plant_type == 'gas':
+                    plot_color = 'black'  # Matplotlib named color
+                    marker = '^'  # triangle
+                else:
+                    continue
+                
+                # Plot with explicit named color - no transparency
+                ax.plot(plant['lon'], plant['lat'], 
+                       marker=marker, markersize=12, 
+                       color=plot_color, markeredgecolor='white',
+                       markeredgewidth=1.5, transform=ccrs.PlateCarree(),
+                       zorder=12, alpha=1.0)
+                
+                # Add to legend if not already added - use same hex color
+                if plant_type not in plotted_types:
+                    legend_elements.append(
+                        plt.Line2D([0], [0], marker=marker, color='w', 
+                                  markerfacecolor=plot_color, markersize=10,
+                                  markeredgecolor='white', markeredgewidth=1.5,
+                                  label=f"{plant_type.title()} Power Plants")
+                    )
+                    plotted_types.add(plant_type)
+    
+    # Add legend if there are any power plants
+    if legend_elements:
+        ax.legend(handles=legend_elements, loc='upper left', 
+                fontsize=9, framealpha=0.9, edgecolor='black')
+    
+    return legend_elements
+
 def load_composite(pollutant_code, data_dir='data/processed'):
     """Load monthly composite for a pollutant."""
     file_path = os.path.join(data_dir, f"{pollutant_code}_monthly_composite.nc")
@@ -295,31 +381,49 @@ def create_animation(pollutant_code, output_dir='outputs/animations'):
     else:
         LON, LAT = lon, lat
     
-    # Get value range for consistent colormap
+    # Get value range for consistent colormap (use percentiles to better show hotspots)
     all_values = composite.values
-    vmin = np.nanmin(all_values)
-    vmax = np.nanmax(all_values)
+    all_values_clean = all_values[~np.isnan(all_values)]
+    if len(all_values_clean) > 0:
+        vmin = np.nanpercentile(all_values, 5)  # Use 5th percentile instead of min
+        vmax = np.nanpercentile(all_values, 95)  # Use 95th percentile instead of max
+    else:
+        vmin = np.nanmin(all_values)
+        vmax = np.nanmax(all_values)
     
-    # Initialize plot
+    # Use a colormap that emphasizes hotspots (YlOrRd for better contrast)
+    if pollutant_code in ['HCHO', 'SO2']:
+        # Use a colormap that better shows clustering for these pollutants
+        cmap = 'YlOrRd'  # Yellow-Orange-Red, good for showing hotspots
+    else:
+        cmap = 'viridis'
+    
+    # Initialize plot using pcolormesh instead of contourf to preserve local variations
     values = composite.isel(time=0).values
     if values.ndim > 2:
         values = values.squeeze()
     
-    im = ax.contourf(LON, LAT, values,
-                    transform=ccrs.PlateCarree(),
-                    cmap='viridis', levels=20,
-                    vmin=vmin, vmax=vmax, alpha=0.8)
+    # Use pcolormesh for better preservation of hotspots (no interpolation)
+    im = ax.pcolormesh(LON, LAT, values,
+                      transform=ccrs.PlateCarree(),
+                      cmap=cmap, shading='auto',
+                      vmin=vmin, vmax=vmax, alpha=0.9)
     
     cbar = plt.colorbar(im, ax=ax, label=f"{pollutant_info['name']} ({pollutant_info['unit']})",
-                       shrink=0.8, pad=0.05, aspect=30)
+                       shrink=0.8, pad=0.05, aspect=30, extend='both')
     cbar.ax.tick_params(labelsize=9)
     cbar.set_label(f"{pollutant_info['name']} ({pollutant_info['unit']})", fontsize=10)
     
     # Add Delhi ROI contour
     add_delhi_roi_contour(ax)
     
-    ax.plot(config.DELHI_CENTER['lon'], config.DELHI_CENTER['lat'],
-           'r*', markersize=20, transform=ccrs.PlateCarree(), zorder=10)
+    # Add power plant points with legend and get legend handles for consistent colors
+    legend_handles = add_power_plant_points(ax)
+    
+    # Get extent bounds for filtering in animation
+    lon_min, lon_max, lat_min, lat_max = extent
+    
+    # Remove Delhi center marker (as per previous request)
     
     title = ax.set_title(f"{pollutant_info['name']} - {composite.time.values[0]}",
                         fontsize=13, fontweight='bold', pad=20)
@@ -329,22 +433,57 @@ def create_animation(pollutant_code, output_dir='outputs/animations'):
         ax.set_extent(extent, crs=ccrs.PlateCarree())
         ax.add_feature(cfeature.COASTLINE, linewidth=0.5, alpha=0.5)
         ax.add_feature(cfeature.BORDERS, linewidth=0.5, alpha=0.5)
-        ax.gridlines(draw_labels=True, alpha=0.5, linestyle='--')
+        gl = ax.gridlines(draw_labels=True, alpha=0.5, linestyle='--')
+        gl.top_labels = False
+        gl.right_labels = False
         
         values = composite.isel(time=frame).values
         if values.ndim > 2:
             values = values.squeeze()
         
-        im = ax.contourf(LON, LAT, values,
-                        transform=ccrs.PlateCarree(),
-                        cmap='viridis', levels=20,
-                        vmin=vmin, vmax=vmax, alpha=0.8)
+        # Use pcolormesh for better preservation of hotspots (no interpolation)
+        im = ax.pcolormesh(LON, LAT, values,
+                          transform=ccrs.PlateCarree(),
+                          cmap=cmap, shading='auto',
+                          vmin=vmin, vmax=vmax, alpha=0.9)
         
         # Add Delhi ROI contour
         add_delhi_roi_contour(ax)
         
-        ax.plot(config.DELHI_CENTER['lon'], config.DELHI_CENTER['lat'],
-               'r*', markersize=20, transform=ccrs.PlateCarree(), zorder=10)
+        # Add power plant points with consistent colors (black for coal, green for gas)
+        # Plot power plants without recreating legend each frame
+        for plant_type, plants in MAJOR_POWER_PLANTS.items():
+            for plant in plants:
+                # Check if plant is within map extent
+                if (lon_min - 0.5 <= plant['lon'] <= lon_max + 0.5 and 
+                    lat_min - 0.5 <= plant['lat'] <= lat_max + 0.5):
+                    
+                    # Use matplotlib named colors - EXACT SAME as initial plot
+                    if plant_type == 'coal':
+                        plot_color = 'black'  # Matplotlib named color
+                        marker = 's'  # square
+                    elif plant_type == 'gas':
+                        plot_color = 'black'  # Matplotlib named color
+                        marker = '^'  # triangle
+                    else:
+                        continue  # Skip unknown types
+                    
+                    ax.plot(plant['lon'], plant['lat'], 
+                           marker=marker, markersize=12, 
+                           color=plot_color, markeredgecolor='white',
+                           markeredgewidth=1.5, transform=ccrs.PlateCarree(),
+                           zorder=12, alpha=1.0)
+        
+        # Re-add legend with consistent handles (only if we have plants in view)
+        # Use the same handles from initial plot to ensure color consistency
+        if legend_handles and len(legend_handles) > 0:
+            # Clear any existing legend first
+            if ax.get_legend():
+                ax.get_legend().remove()
+            ax.legend(handles=legend_handles, loc='upper left', 
+                    fontsize=9, framealpha=0.9, edgecolor='black')
+        
+        # Remove Delhi center marker (as per previous request)
         
         time_str = str(composite.time.values[frame])[:7]  # YYYY-MM
         ax.set_title(f"{pollutant_info['name']} - {time_str}",
